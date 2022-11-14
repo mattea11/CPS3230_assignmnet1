@@ -13,8 +13,9 @@ public class App {
 
         WebDriver driver = null;
 
-        int alertNo = 0; //is one less than the actual amount of alerts we will get
-        List<itemInfo> items = new ArrayList<>();//itemInfo[] items = new itemInfo[alertNo];
+        //task 1
+        int alertNo = 0; //is one less than the actual amount of alerts we will get more
+        List<itemInfo> items = new ArrayList<>();
         List<String> alerts = new ArrayList<>();
 
         driver = ws.setUpDriver(driver);
@@ -26,14 +27,10 @@ public class App {
         for (int i = 0; i < alerts.size(); i++) {
             pa.postAlert(alerts.get(i));
         }
-        // pa.deleteAlerts();
 
+        //task 2
         driver = t2.accessMarketUm(driver);
         driver = t2.goToLogIn(driver, "7f84a00a-eeac-47fa-b15c-ee7e7ff9378d");
         driver = t2.goToAlerts(driver);
-        // driver = t2.goToHome(driver);
-        // driver = t2.goToLogOut(driver);
-        // t2.closeMarketUm(driver);
-
     }
 }

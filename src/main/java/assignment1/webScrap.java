@@ -31,21 +31,26 @@ public class webScrap {
         
         WebElement row;
         String title; String description; String url; String image; String price;
-        List<itemInfo> items = new ArrayList<>();//itemInfo[alertNo+1];
+        List<itemInfo> items = new ArrayList<>();
 
         for (int i = 1; i <= alertNo+1; i++) { //get the first x amount of items and any required information about them
+            //iterate oover specficic rows to pull the data from
             row = driver.findElement(By.xpath("//*[@id=\"MainForm\"]/table[2]/tbody/tr/td/table/tbody/tr/td/div/div["+ i +"]/div"));
 
+            //get the required data from the website
             url = row.findElement(By.tagName("a")).getAttribute("href");
             image = row.findElement(By.tagName("img")).getAttribute("src");
             title = row.findElement(By.tagName("a")).getAttribute("title");
             description = row.findElement(By.xpath("//*[@id=\"MainForm\"]/table[2]/tbody/tr/td/table/tbody/tr/td/div/div[1]/div/div/a[1]")).getText();
             price = row.findElement(By.xpath("//*[@id=\"MainForm\"]/table[2]/tbody/tr/td/table/tbody/tr/td/div/div[1]/div/div/div[1]/div/font[1]/div/b")).getText();
             price = price.replaceAll("[^0-9]", "");
-            
-            items.add(new itemInfo(title, description, url, image, price));
-        }
 
-        return items; //return a list of all the items scarpped fro the website
+            if(url == "" || image == "" || title == "" || description == "" || price == ""){
+                throw new IllegalArgumentException("None of the item information should be null");
+            }else{
+                items.add(new itemInfo(title, description, url, image, price));
+            }
+        }
+        return items; //return a list of all the items scarpped from the website
     } 
 }

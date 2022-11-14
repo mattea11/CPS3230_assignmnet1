@@ -32,37 +32,43 @@ public class postApi {
         System.out.println(e.getMessage());
         }
 
-        for (int i = 0; i < items.size(); i++) {    //create a jsonobject for every item passed in
+        for (int i = 0; i < items.size(); i++) { //create a jsonobject for every item passed in
 
-            if(items.get(i).price.length() == 1){ // ensures the price passed is always 4 digits long 
-                act_price = Integer.parseInt(items.get(i).price) * 1000;
-            } else if(items.get(i).price.length() == 2){
-                act_price = Integer.parseInt(items.get(i).price) * 100;
-            } else if(items.get(i).price.length() == 3){
-                act_price = Integer.parseInt(items.get(i).price) * 10;
-            } else{
-                act_price = Integer.parseInt(items.get(i).price);
+            if(itemType < 1 || itemType > 6 ||  items.get(i).image == "" || items.get(i).title == "" || items.get(i).description == "" || items.get(i).url == "" || items.get(i).price == ""){
+                throw new IllegalArgumentException("None of the item information should be null");
+            }else{
+
+                if(items.get(i).price.length() == 1){ // ensures the price passed is always 4 digits long 
+                    act_price = Integer.parseInt(items.get(i).price) * 1000;
+                } else if(items.get(i).price.length() == 2){
+                    act_price = Integer.parseInt(items.get(i).price) * 100;
+                } else if(items.get(i).price.length() == 3){
+                    act_price = Integer.parseInt(items.get(i).price) * 10;
+                } else{
+                    act_price = Integer.parseInt(items.get(i).price);
+                }
+
+                //create the json object
+                json.put("alertType", itemType);
+                json.put("heading", items.get(i).title);
+                json.put("description", items.get(i).description);
+                json.put("url", items.get(i).url);
+                json.put("imageUrl", items.get(i).image);
+                json.put("postedBy", "7f84a00a-eeac-47fa-b15c-ee7e7ff9378d");
+                json.put("priceInCents", act_price);
+
+                alert.add(json.toString());
+                System.out.println("Alert created:\t" + json.toString() + "\n\n");
             }
-
-            //create the json object
-            json.put("alertType", itemType);
-            json.put("heading", items.get(i).title);
-            json.put("description", items.get(i).description);
-            json.put("url", items.get(i).url);
-            json.put("imageUrl", items.get(i).image);
-            json.put("postedBy", "7f84a00a-eeac-47fa-b15c-ee7e7ff9378d");
-            json.put("priceInCents", act_price);
-
-            alert.add(json.toString());
-            System.out.println("~~~~" + json.toString() + "\n\n");
         }
         return alert; // return a list of all the alerts generated
     }
 
     public boolean postAlert(String alert) throws IOException{
         URL market_alert_um = new URL("https://api.marketalertum.com/Alert");
-        HttpURLConnection connect = (HttpURLConnection)market_alert_um.openConnection(); //connect to the website
+        HttpURLConnection connect = (HttpURLConnection)market_alert_um.openConnection(); 
 
+        //set type of api method
         connect.setRequestMethod("POST");
         connect.setRequestProperty("Content-Type", "application/json");
         connect.setRequestProperty("Accept", "application/json");
@@ -92,7 +98,7 @@ public class postApi {
 
     public boolean deleteAlerts() throws IOException{
         URL market_alert_um = new URL("https://api.marketalertum.com/Alert?userId=7f84a00a-eeac-47fa-b15c-ee7e7ff9378d");
-        HttpURLConnection connect = (HttpURLConnection)market_alert_um.openConnection(); //connect to the website
+        HttpURLConnection connect = (HttpURLConnection)market_alert_um.openConnection(); 
 
         connect.setRequestMethod("DELETE");
         connect.setRequestProperty("Content-Type", "application/json");

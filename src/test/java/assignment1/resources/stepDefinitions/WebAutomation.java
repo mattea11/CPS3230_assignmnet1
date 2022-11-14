@@ -18,17 +18,15 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
 public class WebAutomation {
-    webScrap ws = null;
-    postApi pa = null;
-    task2 t2 = null;
+    webScrap ws = new webScrap();
+    postApi pa = new postApi();
+    task2  t2 = new task2();
     public WebDriver driver = null;
     WebElement table = null;
 
     @Given("I am a user of marketalertum")
     public void iAmAUserOfMarketalertum() {
-    //     t2 = new task2();
-    //     driver = t2.accessMarketUm(driver);
-        assertTrue(true);
+        driver = t2.accessMarketUm(driver);
     }
 
     @When("I login using valid credentials")
@@ -37,9 +35,11 @@ public class WebAutomation {
     }
 
     @Then("I should see my alerts")
-    public void iShouldSeeMyAlerts() {
+    public void iShouldSeeMyAlerts() throws IOException {
         assertTrue(driver.findElement(By.tagName("h1")).isDisplayed());
-        driver.quit();
+        pa.deleteAlerts();
+
+        driver.close();
         driver = null;
     }
 
@@ -51,33 +51,17 @@ public class WebAutomation {
     @Then("I should see the login screen again")
     public void iShouldSeeTheLoginScreenAgain() {
         assertEquals("User ID:", driver.findElement(By.tagName("b")).getText());
-        driver.quit();
+        driver.close();
         driver = null;
     }
 
-    // @When("I logout")
-    // public void iLogout() {
-    //     iLoginUsingValidCredentials();
-    //     driver = t2.goToLogOut(driver);
-    // }
-
-    // @Then("I should see the home page again")
-    // public void iShouldSeeTheHomePageAgain() {
-    //     assertEquals("Welcome to MarketAlertUM", driver.findElement(By.className("display-4")).getText());
-    //     driver.quit();
-    //     driver = null;
-    // }
-
     @Given("I am an administrator of the website and I upload {int} alerts")
     public void iAmAnAdministratorOfTheWebsiteAndIUploadAlerts(int arg0) throws JSONException, IOException {
-        ws = new webScrap();
-        pa = new postApi();
-        t2 = new task2();
 
         List<itemInfo> items = new ArrayList<>();
         List<String> alerts = new ArrayList<>();
 
-        pa.deleteAlerts();
+        pa.deleteAlerts(); //clear alerts to ensure that the amount of alerts posted equates to the actual amount we wished to post
 
         driver = ws.setUpDriver(driver);
         driver = ws.searchItem(driver, "headphones");
@@ -88,14 +72,17 @@ public class WebAutomation {
         for (int i = 0; i < alerts.size(); i++) {
             pa.postAlert(alerts.get(i));
         }
+        assertEquals(arg0, alerts.size()-1);
+
+        driver.close();
+        driver = null;
     }
 
     @When("I view a list of alerts")
     public void iViewAListOfAlerts() {
-        // iLoginUsingValidCredentials();
-        // table = driver.findElement(By.className("pb-3"));
-        // assertNotEquals(null, table);
-        assertTrue(true);
+        iLoginUsingValidCredentials();
+        table = driver.findElement(By.className("pb-3"));
+        assertNotEquals(null, table);
     }
 
     @Then("each alert should contain an icon")
@@ -107,9 +94,8 @@ public class WebAutomation {
 
     @Then("each alert should contain a heading")
     public void each_alert_should_contain_a_heading() {
-        // assertTrue(true);
         for (int i = 1; i <= 3; i++) {
-            assertNotEquals(null, driver.findElement(By.xpath("/html/body/div/main/table[1]/tbody/tr[1]/td/h4/img")).getText());//"/html/body/div/main/table[1]/tbody/tr[1]/td/h4/text()")));
+            assertNotEquals(null, driver.findElement(By.xpath("/html/body/div/main/table[1]/tbody/tr[1]/td/h4/img")).getText());
         }
     }
 
@@ -136,55 +122,16 @@ public class WebAutomation {
 
     @Then("each alert should contain a link to the original product website")
     public void each_alert_should_contain_a_link_to_the_original_product_website() throws IOException {
-        pa = new postApi();
         for (int i = 1; i <= 3; i++) {
             assertNotEquals(null, driver.findElement(By.xpath("/html/body/div/main/table["+i+"]/tbody/tr[5]/td/a")));
         }
         pa.deleteAlerts();
+        driver.close();
+        driver = null;
     }
-
-
-                                    // @And("each alert should contain a heading")
-                                    // public void eachAlertShouldContainAHeading() {
-                                    //     assertTrue(true);
-                                    //     for (int i = 1; i <= 3; i++) {
-                                    //         assertNotEquals(null, driver.findElement(By.xpath("/html/body/div/main/table[1]/tbody/tr[1]/td/h4/text()")).getText());
-                                    //     }
-                                    // }
-
-                                    // @And("each alert should contain a description")
-                                    // public void eachAlertShouldContainADescription() {
-                                    //     for (int i = 1; i <= 3; i++) {
-                                    //         assertNotEquals(null, driver.findElement(By.xpath("/html/body/div/main/table["+i+"]/tbody/tr[3]/td")).getText());
-                                    //     }
-                                    // }
-
-                                    // @And("each alert should contain an image")
-                                    // public void eachAlertShouldContainAnImage() {
-                                    //     for (int i = 1; i <= 3; i++) {
-                                    //         assertNotEquals(null, driver.findElement(By.xpath("/html/body/div/main/table["+i+"]/tbody/tr[2]/td/img")));
-                                    //     }
-                                    // }
-
-                                    // @And("each alert should contain a price")
-                                    // public void eachAlertShouldContainAPrice() {
-                                    //     for (int i = 1; i <= 3; i++) {
-                                    //         assertNotEquals(null, driver.findElement(By.xpath("/html/body/div/main/table["+i+"]/tbody/tr[4]/td/b")).getText());
-                                    //     }
-                                    // }
-
-                                    // @And("each alert should contain a link to the original product website")
-                                    // public void eachAlertShouldContainALinkToTheOriginalProductWebsite() {
-                                    //     for (int i = 1; i <= 3; i++) {
-                                    //         assertNotEquals(null, driver.findElement(By.xpath("/html/body/div/main/table["+i+"]/tbody/tr[5]/td/a")));
-                                    //     }
-                                    // }
 
     @Given("I am an administrator of the website and I upload more than {int} alerts")
     public void iAmAnAdministratorOfTheWebsiteAndIUploadMoreThanAlerts(int arg0) throws JSONException, IOException {
-        ws = new webScrap();
-        pa = new postApi();
-        t2 = new task2();
 
         List<itemInfo> items = new ArrayList<>();
         List<String> alerts = new ArrayList<>();
@@ -200,61 +147,48 @@ public class WebAutomation {
         for (int i = 0; i < alerts.size(); i++) {
             pa.postAlert(alerts.get(i));
         }
+        assertEquals(arg0, alerts.size()-1);
+        driver.close();
+        driver = null;
     }
 
     @Then("I should see {int} alerts")
     public void iShouldSeeAlerts(int arg0) throws IOException {
-        // pa = new postApi();
-        // assertEquals(arg0, driver.findElements(By.tagName("table")).size());
-        assertTrue(true);
+        assertEquals(arg0, driver.findElements(By.tagName("table")).size());
     }
 
-    @Given("I am an administrator of the website and I upload an alert of type <alert-type>")
+    @Given("^I am an administrator of the website and I upload an alert of type? ([0-9]+)")
     public void iAmAnAdministratorOfTheWebsiteAndIUploadAnAlertOfTypeAlertType(int alertType) throws JSONException, IOException {
-        // ws = new webScrap();
-        // pa = new postApi();
-        // t2 = new task2();
+        
+        List<itemInfo> items = new ArrayList<>();
+        List<String> alerts = new ArrayList<>();
 
-        // List<itemInfo> items = new ArrayList<>();
-        // List<String> alerts = new ArrayList<>();
+        pa.deleteAlerts(); //remove all previous alerts
 
-        // pa.deleteAlerts(); //remove all previous alerts
+        driver = ws.setUpDriver(driver);
+        driver = ws.searchItem(driver, "headphones");
+        items = ws.QueryItemInfo(driver, 0);
 
-        // driver = ws.setUpDriver(driver);
-        // driver = ws.searchItem(driver, "headphones");
-        // items = ws.QueryItemInfo(driver, 0);
+        alerts = pa.createJsonObject(items, alertType);
 
-        // alerts = pa.createJsonObject(items, alertType);
+        for (int i = 0; i < alerts.size(); i++) {
+            pa.postAlert(alerts.get(i));
+        }
 
-        // for (int i = 0; i < alerts.size(); i++) {
-        //     pa.postAlert(alerts.get(i));
-        // }
+        assertEquals(1, alerts.size());
 
-        // assertEquals(1, alerts.size());
-        assertTrue(true);
+        driver.close();
+        driver = null;
     }
 
-    // @Then("the icon displayed should be <icon file name>")
-    // public void theIconDisplayedShouldBeIconFileName() {
-    //     assertTrue(true);
-    // }
+    @Then("^The icon displayed should be (.+)")
+    public void the_icon_displayed_should_be_file_icon_file_name(String iconFileName) throws IOException {
+        String iconFile = driver.findElement(By.cssSelector("body > div > main > table:nth-child(2) > tbody > tr:nth-child(1) > td > h4 > img")).getAttribute("src");
+        String[] cleanedFileName = iconFile.split("/");
+        assertEquals(iconFileName, cleanedFileName[4]); 
 
-    // @Then("the icon displayed should be file")
-    // public void the_icon_displayed_should_be_file() {
-    //     // Write code here that turns the phrase above into concrete actions
-    // }
-
-    // @Then("the icon displayed should be file &lt;icon-file-name&gt;")
-    // public void the_icon_displayed_should_be_file_lt_icon_file_name_gt() {
-    //     // Write code here that turns the phrase above into concrete actions
-    // }
-
-    @Then("the icon displayed should be file <icon-file-name>")
-    public void the_icon_displayed_should_be_file_icon_file_name(String iconFileName) {
-        // String iconFile = driver.findElement(By.xpath("//html/body/div/main/table/tbody/tr[1]/td/h4/img")).getAttribute("src");
-        // String[] cleanedFileName = iconFile.split("/");
-        // System.out.print("~~~" + cleanedFileName[2]);
-        // assertEquals(iconFileName, cleanedFileName[2]);
-        assertTrue(true);
+        driver.close();
+        driver = null;
     }
+
 }

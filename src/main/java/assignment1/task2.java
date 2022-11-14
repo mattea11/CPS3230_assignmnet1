@@ -11,24 +11,24 @@ public class task2 {
         System.setProperty("webdriver.chrome.driver", "C:\\chromedriver_win32\\chromedriver.exe");
         driver = new ChromeDriver();
         String url = "https://www.marketalertum.com/";
-        driver.get(url); //open website
+        driver.get(url); 
         return driver;
     }
 
     public WebDriver goToLogIn(WebDriver driver, String username){
-        driver.findElement(By.xpath("//a[@href='/Alerts/Login']")).click();
-        driver.findElement(By.id("UserId")).sendKeys(username);
-        driver.findElement(By.xpath("//input[@type='submit']")).click();
+        driver.findElement(By.xpath("//a[@href='/Alerts/Login']")).click(); 
+        driver.findElement(By.id("UserId")).sendKeys(username); 
+        driver.findElement(By.xpath("//input[@type='submit']")).click(); 
         return driver;
     }
 
     public WebDriver goToLogOut(WebDriver driver){
-        driver.findElement(By.xpath("//a[@href='/Home/Logout']")).click(); // "/html/body/header/nav/div/div/ul/li[3]/a")).click();// 
+        driver.findElement(By.xpath("//a[@href='/Home/Logout']")).click();  
         return driver;
     }
     
     public WebDriver goToAlerts(WebDriver driver){
-        driver.findElement(By.xpath("//a[@href='/Alerts/List']")).click();        
+        driver.findElement(By.xpath("//a[@href='/Alerts/List']")).click();         
         return driver;
     }
 
